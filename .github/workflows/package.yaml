@@ -34,7 +34,7 @@ jobs:
       #     path: plugin
       - name: Zip
         run: |
-          zip -r plugin plugin/
+          7z a -tzip plugin.zip plugin/
       - name: Create release
         id: create_release
         uses: actions/create-release@v1.0.0
