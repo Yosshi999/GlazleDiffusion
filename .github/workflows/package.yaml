@@ -1,6 +1,10 @@
 name: package
 run-name: packaging plugin
-on: [push]
+on:
+  push:
+    tags:
+      - "v*"
+
 jobs:
   build:
     runs-on: windows-latest
@@ -22,8 +26,36 @@ jobs:
           Move-Item -Path python-3.9.13-embed-amd64/python.exe -Destination plugin/
           Move-Item -Path python-3.9.13-embed-amd64/python39.zip -Destination plugin/
           Move-Item -Path src/* -Destination plugin/
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
+          Remove-Item plugin/site-packages/bin/*
+      # - name: Archive production artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: plugin-windows
+      #     path: plugin
+      - name: Zip
+        run: |
+          zip -r plugin plugin/
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: plugin-windows
-          path: plugin
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: true
+      - name: Upload Release Asset
+        id: upload-release-asset-linux
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./plugin.zip
+          asset_name: plugin_win_amd64.zip
+          asset_content_type: application/zip
