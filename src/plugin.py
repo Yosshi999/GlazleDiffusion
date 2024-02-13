@@ -31,7 +31,7 @@ import tkinter
 from PIL import ImageTk, Image, ImageDraw
 home = os.path.expanduser("~")
 glaze = os.path.join(home, ".glaze", "base", "base")
-os.environ["TCL_LIBRARY"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib/tcl8.6")
+os.environ["TCL_LIBRARY"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "site-packages/tcl/tcl8.6")
 from diffusers import StableDiffusionPipeline
 import torch
 
